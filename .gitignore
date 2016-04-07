@@ -1,2 +1,5 @@
 *.sqlite3
 .idea
+*.pyc
+*.pyo
+__pycache__/
