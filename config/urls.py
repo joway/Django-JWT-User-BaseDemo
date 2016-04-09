@@ -40,4 +40,5 @@ urlpatterns = [
     url(r'^api/v1/auth/', include(jwt_urlpatterns)),
     url(r'^api/v1/oauth/', include('social.apps.django_app.urls', namespace='social')),
     url(r'', include(router.urls)),
+    url(r'$', 'users.views.index'),
 ]

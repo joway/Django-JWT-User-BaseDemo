@@ -16,6 +16,7 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
+
 SOCIAL_AUTH_USER_MODEL = 'users.Oauth'
 
 SOCIAL_AUTH_PIPELINE = (

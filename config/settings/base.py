@@ -34,11 +34,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # my app
     'users',
     'utils',
-    'rest_framework',
-    'social.apps.django_app.default',
 
+    # third part
+    'rest_framework',
+    # oauth
+    'social.apps.django_app.default',
     # 解決跨域問題
     'corsheaders',
 ]
@@ -54,7 +57,6 @@ MIDDLEWARE_CLASSES = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-
 ]
 
 REST_FRAMEWORK = {
@@ -100,7 +102,6 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -118,7 +119,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
-
 LANGUAGE_CODE = 'zh-hans'
 
 TIME_ZONE = 'Asia/Shanghai'
@@ -131,11 +131,12 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
-
 STATIC_URL = '/static/'
 
-AUTH_USER_MODEL = 'users.User'
 
+# JWT
+
+AUTH_USER_MODEL = 'users.User'
 JWT_AUTH = {
     'JWT_ENCODE_HANDLER':
         'rest_framework_jwt.utils.jwt_encode_handler',
@@ -167,11 +168,6 @@ JWT_AUTH = {
     'JWT_AUTH_HEADER_PREFIX': 'JWT',
 }
 
-AUTHENTICATION_BACKENDS = (
-    'social.backends.open_id.OpenIdAuth',
-    'social.backends.google.GoogleOAuth2',
-    # 'social.backends.qq.QQOAuth2',
-    'social.backends.github.GithubOAuth2',
-    # 'users.oauth.CodingOAuth2',
-    'django.contrib.auth.backends.ModelBackend',
-)
+
+# oauth
+from .oauth import *
