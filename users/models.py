@@ -4,6 +4,8 @@ from django.db import models
 from django.utils import timezone as tz
 from django.utils.crypto import get_random_string
 
+from .constants import provider_name
+
 ALLOWED_CHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
 
 
@@ -72,3 +74,36 @@ class User(AbstractBaseUser, PermissionsMixin):
     def get_full_name(self):
         return self.username
 
+
+class OauthManager(BaseUserManager):
+    def create_user(self, username, email, **extra_fields):
+        """
+        Creates and saves a User with the given username, email and password.
+        """
+        if not email:
+            raise ValueError('The given email must be set')
+        email = self.normalize_email(email)
+        user = self.model(
+            username=username, email=email, **extra_fields)
+        user.save(using=self._db)
+        return user
+
+
+# 每个Oauth绑定的帐户都算是一个小的子帐户,拥有从第三方平台获取到的 :
+# username, email, avatar_url, expire, access_token ,refresh_token, provider
+# 并绑定了一个标准用户对象
+class Oauth(models.Model):
+    username = models.CharField('名称', max_length=255, blank=True)
+    email = models.EmailField('邮箱', db_index=True)
+    avatar_url = models.CharField('头像url', max_length=255, blank=True)
+    expire = models.DateTimeField('token失效时间', blank=True, null=True)
+    access_token = models.CharField('access_token', max_length=255)
+    refresh_token = models.CharField('refresh_token', max_length=255, blank=True)
+    provider = models.CharField('类别', max_length=255)
+
+    user = models.ForeignKey(User, blank=True, null=True)
+    objects = OauthManager()
+
+    @property
+    def provider_name(self):
+        return provider_name[self.provider]

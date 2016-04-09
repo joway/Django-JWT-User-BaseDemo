@@ -14,3 +14,7 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+IGNORE_CSRF_URLS = ['*']
+
+CORS_ORIGIN_ALLOW_ALL = True

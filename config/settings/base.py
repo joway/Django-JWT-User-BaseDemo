@@ -12,15 +12,16 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 
 import os
 
+from config.settings import secret
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import datetime
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'zpv*f_9&o=@+!^dnl^-43+9wjyv9&9@9*p30lkr(x139f9a57o'
+SECRET_KEY = secret.SECRET_KEY
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
@@ -36,6 +37,10 @@ INSTALLED_APPS = [
     'users',
     'utils',
     'rest_framework',
+    'social.apps.django_app.default',
+
+    # 解決跨域問題
+    'corsheaders',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -47,6 +52,9 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
+
 ]
 
 REST_FRAMEWORK = {
@@ -57,6 +65,11 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+    ),
+    'DEFAULT_PARSER_CLASSES': (
+        'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.FormParser',
+        'rest_framework.parsers.MultiPartParser',
     ),
 }
 
@@ -69,18 +82,21 @@ TEMPLATES = [
         ,
         'APP_DIRS': True,
         'OPTIONS': {
+            # 即为 : TEMPLATE_CONTEXT_PROCESSORS
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+
+                'social.apps.django_app.context_processors.backends',
+                'social.apps.django_app.context_processors.login_redirect',
             ],
         },
     },
 ]
 
 WSGI_APPLICATION = 'config.wsgi.application'
-
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
@@ -141,7 +157,7 @@ JWT_AUTH = {
     'JWT_VERIFY': True,
     'JWT_VERIFY_EXPIRATION': True,
     'JWT_LEEWAY': 0,
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=300),
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=60 * 60 * 24),
     'JWT_AUDIENCE': None,
     'JWT_ISSUER': None,
 
@@ -150,3 +166,12 @@ JWT_AUTH = {
 
     'JWT_AUTH_HEADER_PREFIX': 'JWT',
 }
+
+AUTHENTICATION_BACKENDS = (
+    'social.backends.open_id.OpenIdAuth',
+    'social.backends.google.GoogleOAuth2',
+    # 'social.backends.qq.QQOAuth2',
+    'social.backends.github.GithubOAuth2',
+    # 'users.oauth.CodingOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)

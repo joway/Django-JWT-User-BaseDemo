@@ -1,0 +1,25 @@
+<script src="//cdn.bootcss.com/jquery/3.0.0-beta1/jquery.js"></script>
+<script>
+    var credentials = {
+        username: "joway",
+        password: "wangzhuowei"
+    };
+
+    $.post("http://localhost:8001/api/v1/auth/", credentials, function (auth) {
+        $.ajax({
+            type: "GET",
+            url: "http://localhost:8001/user",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", "JWT " + auth.token);
+            },
+            success: function (data) {
+                console.log(data);
+                // {id: 1, username: "admin", token: "eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJ1c2VyX2lkIjogMX0.BSf1w1blYKcbxVlyOtUogUsozH2clY34xxYPd8lQIlQ"}
+            }
+        });
+    });
+</script>
+
+<h1>Welcome</h1>
+<p><a href="/logout">Logout</a>
+    <button type="button" id="btn"></button>

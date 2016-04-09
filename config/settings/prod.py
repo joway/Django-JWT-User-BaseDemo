@@ -15,3 +15,10 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+IGNORE_CSRF_URLS = [r'^/list/del$', r'^/list/finish$']
+
+CORS_ORIGIN_WHITELIST = (
+    'google.com',
+    'joway.wang'
+)
